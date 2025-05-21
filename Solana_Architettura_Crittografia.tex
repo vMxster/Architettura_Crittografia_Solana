@@ -288,7 +288,7 @@
 		\item Si integra perfettamente con PoH, Gulf Stream e Cloudbreak, fornendo un flusso continuo di dati e transazioni che scorre attraverso la rete senza strozzature significative.  
 	\end{itemize}
 	
-	\chapter{Cloudbreak (Accounts database)}
+	\section{Cloudbreak (Accounts database)}
 	Cloudbreak é un database progettato per gestire milioni di account in maniera veloce e scalabile. Il compito principale di Cloudbreak é tenere traccia dello stato degli account. Ogni volta che viene eseguita una transazione, i profili coinvolti vengono letti e aggiornati nel minor tempo possibile. In questo capitolo, entreró in dettaglio su come Cloudbreak riesce a raggiungere questi obiettivi tramite una serie di tecniche:
 	
 	\begin{itemize}
@@ -297,7 +297,7 @@
 		\item \textbf{Indicizzazione efficiente}: ogni account ha chiave pubblica che viene indicizzata per trovare rapidamente la posizione dei suoi dati nel database.
 	\end{itemize}
 	
-	\section{Funzionamento di Cloudbreak}
+	\subsection{Funzionamento di Cloudbreak}
 	Per comprendere meglio Cloudbreak, é utile analizzare il suo funzionamento durante l'esecuzione di un blocco. Ogni validatore lo utilizza per leggere lo stato degli account coinvolti in una transazione, aggiornare tali dati e garantire che il risultato sia consistente e persistente nel tempo, applicando i seguenti passaggi:
 	\begin{enumerate}
 		\item \textbf{Caricamento dello stato iniziale}: all'inizio dell'elaborazione di un blocco, il validatore accede ad uno snapshot dello stato corrente tramite memory-mapped files, in modo da avere una base di riferimento immutabile per il passo successivo.
@@ -306,7 +306,7 @@
 		\item \textbf{Batching delle scritture}: al termine del blocco, le modifiche vengono raccolte in un batch e scritte in modo atomico sui dischi SSD.
 	\end{enumerate}
 	
-	\section{Pulizia e gestione dello spazio}
+	\subsection{Pulizia e gestione dello spazio}
 	Cloudbreak include una serie di meccanismi per mantenere il database leggero ed efficiente:
 	\begin{itemize}
 		\item \textbf{Flushing}: trasferisce i dati temporanei dalla RAM al disco.
@@ -315,7 +315,7 @@
 		\item \textbf{Purging}: cancella completamente i dati legati a rami della blockchain che sono stati abbandonati.
 	\end{itemize}
 	
-	\section{Scalabilità orizzontale, Consistenza e Resilienza di Cloudbreak}
+	\subsection{Scalabilità orizzontale, Consistenza e Resilienza di Cloudbreak}
 	Oltre al design di base per l'accesso concorrente allo stato, é importante comprendere come Cloudbreak assicuri la scalabilità orizzontale, mantenga la consistenza dei dati e tolleri guasti hardware o di rete:
 	\begin{itemize}
 		\item \textbf{Striping RAID 0 e mappatura in memoria:} Cloudbreak organizza i dati degli account su più SSD in striping RAID 0, mappando ciascun file su memoria virtuale tramite mmap. Questo approccio permette di distribuire le richieste di I/O tra tutti i dischi disponibili, riducendo drasticamente la latenza di lettura e scrittura ed aumentando linearmente il throughput con l’aggiunta di ogni nuovo SSD.
@@ -468,11 +468,11 @@
 		
 		\bibitem{solanadocs} 
 		Solana Documentation, 2023. Disponibile su:
-		\url{solana.com/docs}
+		\url{https://solana.com/docs}
 		
 		\bibitem{solananews} 
 		Solana News. Disponibile su:
-		\url{solana.com/it/news}
+		\url{https://solana.com/it/news}
 		
 		\bibitem{castro1999pbft}
 		M. Castro e B. Liskov, \emph{Practical Byzantine Fault Tolerance}, in OSDI, 1999. Disponibile su: \url{https://pmg.csail.mit.edu/papers/osdi99.pdf}
