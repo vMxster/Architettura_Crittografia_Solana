@@ -23,40 +23,40 @@
 	Solana si distingue per la sua architettura modulare, dove ogni componente gioca un ruolo cruciale nel raggiungere un throughput elevato. I moduli di questa architettura sono:
 	
 	\section{Proof of History (PoH)}
-	Un orologio globale decentralizzato che registra il tempo e l'ordine degli eventi, riducendo la necessità di comunicazioni aggiuntive per il consenso.
+	Il Proof of History è un "orologio" crittografico globale e decentralizzato che si occupa di registrare, in modo verificabile, il tempo e l'ordine degli eventi all'interno della blockchain. Questa innovazione riduce drasticamente la necessità di comunicazioni e scambi di messaggi tra i nodi per raggiungere il consenso sull'ordine temporale delle transazioni. Il PoH permette ai validatori di concordare sull'ordine degli eventi senza dover comunicare attivamente tra loro per ogni timestamp, migliorando notevolmente l'efficienza e la velocità della rete.
 	
 	\section{Tower Byzantine Fault Tolerance (Tower BFT)}
-	Un protocollo di consenso ottimizzato per PoH, che sfrutta il Timestamping per raggiungere un accordo sui blocchi in modo rapido ed efficiente, tollerando nodi malfunzionanti.
+	Tower BFT è un protocollo di consenso ottimizzato per funzionare in combinazione con il Proof of History. Prendendo ispirazione dai principi del Practical Byzantine Fault Tolerance (PBFT), Tower BFT sfrutta il timestamping fornito dal PoH per raggiungere un accordo sui blocchi in maniera rapida ed efficiente. La sua architettura è progettata per tollerare la presenza di nodi malfunzionanti o malevoli all'interno della rete, garantendo la continuità e l'integrità del ledger. La collaborazione tra PoH e Tower BFT è un elemento fondamentale per garantire la scalabilità di Solana, in quanto il Proof of History fornisce una cronologia verificabile che semplifica e velocizza il processo di voto e finalizzazione del consenso.
 	
 	\section{Turbine}
-	Un protocollo di propagazione dei blocchi, ispirato a BitTorrent, che distribuisce i dati dei blocchi in modo efficiente a migliaia di validatori utilizzando una struttura ad albero e codici di correzione degli errori.
+	Turbine è il protocollo di propagazione dei blocchi, che si ispira a BitTorrent. Il suo compito principale è quello di distribuire i dati dei blocchi in modo efficiente a migliaia di validatori attraverso la rete. Per raggiungere questo obiettivo, Turbine suddivide i blocchi in piccoli pacchetti e li trasmette utilizzando una struttura ad albero multi-livello, riducendo la complessità di comunicazione da lineare a logaritmica rispetto al numero di nodi. Inoltre, incorpora codici di correzione degli errori (come i codici Reed-Solomon) per garantire che i validatori possano ricostruire il blocco completo anche in presenza di perdita di pacchetti, aumentando la robustezza e la resilienza della rete.
 	
 	\section{Gulf Stream}
-	Un protocollo di gestione delle transazioni che elimina la necessitá di un mempool tradizionale, inoltrando le transazioni direttamente ai futuri leader per un'esecuzione anticipata e una riduzione di utilizzo della memoria.
+	Gulf Stream è un protocollo di gestione delle transazioni che rivoluziona il concetto tradizionale di "mempool" nelle blockchain. Gulf Stream elimina questa necessità inoltrando le transazioni direttamente ai futuri leader (validatori che saranno responsabili della creazione dei prossimi blocchi) con un certo anticipo. Questo permette un'esecuzione anticipata delle transazioni ed una significativa riduzione dell'utilizzo della memoria sui nodi. La predizione del leader, resa possibile dal PoH, consente ai client di inviare le transazioni al validatore corretto con largo anticipo, riducendo la latenza di conferma e migliorando l'efficienza complessiva della rete.
 	
 	\section{Sealevel}
-	Un runtime parallelo per smart contract che esegue simultaneamente milioni di transazioni non conflittuali, sfruttando hardware multi-core e GPU per massimizzare la potenza computazionale.
+	Sealevel è il runtime parallelo per l'esecuzione degli smart contract. A differenza di quelli sequenziali di molte blockchain, Sealevel è progettato per eseguire simultaneamente milioni di transazioni non conflittuali. Questo è reso possibile dalla capacità degli smart contract su Solana di dichiarare in anticipo gli account che andranno a leggere o modificare, consentendo a Sealevel di identificare e parallelizzare le esecuzioni che non presentano dipendenze. Sfruttando appieno l'hardware multi-core e le GPU, Sealevel massimizza la potenza computazionale disponibile, incrementando drasticamente il throughput delle transazioni e la scalabilità delle applicazioni decentralizzate.
 	
 	\section{Pipelining}
-	Un meccanismo di ottimizzazione della validazione delle transazioni che divide il processo in fasi e le assegna a diverse unità di elaborazione, aumentando il throughput complessivo.
+	Il Pipelining è un meccanismo di ottimizzazione che divide il processo di validazione delle transazioni in fasi distinte e le assegna a diverse unità di elaborazione hardware e software. Ogni fase della pipeline lavora su un batch differente di transazioni, consentendo di elaborare più operazioni contemporaneamente in stadi diversi. Le fasi includono la ricezione dei pacchetti, la verifica delle firme, lo scheduling delle transazioni, l'esecuzione degli smart contract e l'aggiornamento dello stato.
 	
 	\section{Cloudbreak (Accounts database)}
-	Un sistema di memorizzazione dello stato progettata per scalare orizzontalmente con SSD, permettendo accessi concorrenti e veloci ai dati degli account, essenziali per l'esecuzione parallela.
+	Cloudbreak è il sistema di memorizzazione dello stato, un database progettato per scalare orizzontalmente utilizzando SSD ad alte prestazioni. La sua funzione è quella di gestire l'accesso e la modifica degli account, che rappresentano lo stato della blockchain. Cloudbreak è ottimizzato per permettere accessi concorrenti e veloci ai dati degli account, il che è essenziale per supportare l'esecuzione parallela delle transazioni permessa da Sealevel. La sua architettura è progettata per gestire volumi elevati di operazioni I/O, garantendo consistenza e resilienza anche sotto carichi intensi.
 	
 	\section{Archivers}
-	Un sistema di storage distribuito per la storia del ledger, che trasferisce questo compito dai validatori a nodi specializzati, garantendo la disponibilità a lungo termine dei dati storici in modo decentralizzato ed efficiente.
+	Gli Archivers sono un sistema di storage distribuito e decentralizzato per la storia completa del ledger di Solana. Invece di sovraccaricare i validatori per la conservazione dell'intera storia della blockchain, questo incarico viene delegato a nodi specializzati. Gli Archivers scaricano i dati dal leader e li replicano in modo ridondante, utilizzando tecniche come l'Erasure Coding per garantire la disponibilità a lungo termine e la verifica dell'integrità dei dati storici. Questo approccio garantisce che la storia del ledger rimanga accessibile e verificabile in modo decentralizzato ed efficiente, migliorando la resilienza complessiva della rete.
 	
 	\chapter{Analisi dettagliata dei moduli architetturali}
 	
-	Dopo aver introdotto l'architettura di Solana, nei prossimi capitoli parlerò in dettaglio di ogni modulo, in modo da aver chiaro il funzionamento di ciascun componente.
+	Dopo aver introdotto l'architettura di Solana, nei prossimi capitoli parlerò in dettaglio di ciascun componente. L'obiettivo è quello di spiegare in modo approfondito il funzionamento, le specifiche tecniche, il ruolo e le interazioni di ogni modulo con gli altri elementi dell'ecosistema.
 	
 	\section{Proof of History (PoH)}
 	Il Proof of History rappresenta un approccio innovativo per la sincronizzazione temporale e la verifica dell’ordine degli eventi su Solana. In questo capitolo analizzo in dettaglio le componenti tecniche alla base della sua implementazione, illustrandone il funzionamento e le modalità di integrazione con altre funzioni crittografiche della rete.
 	
 	\subsection{Funzionamento SHA-256 sequenziale}
-	Il core del meccanismo PoH si basa sull’uso di una funzione hash, tipicamente SHA-256, eseguita in modo sequenziale. Questa operazione crea una catena di hash in cui ogni output diventa input per il calcolo successivo, garantendo così:
+	Il cuore del meccanismo PoH risiede nell'applicazione iterativa e sequenziale di una funzione hash crittografica, di solito SHA-256. Questo processo genera una sequenza computazionale continua e unidirezionale, dove l'output di ogni operazione hash diventa l'input per il calcolo successivo. Questa catena di hash fornisce una dimostrazione del tempo trascorso.
 	\begin{itemize}
-		\item \textbf{Unicità del percorso computazionale:} l’iterazione sequenziale rende impossibile saltare passaggi o parallelizzare il calcolo, creando una prova verificabile dell’ordine temporale.
+		\item \textbf{Unicità del percorso computazionale:} l’iterazione sequenziale di SHA-256 rende impossibile "saltare" passaggi intermedi o parallelizzare il calcolo senza invalidare la sequenza. Ogni passo dipende dal risultato del precedente, creando una prova crittografica verificabile dell'ordine temporale degli eventi.
 		\item \textbf{Immutabilità:} ogni hash dipende in modo univoco da tutti quelli precedenti, rendendo ogni modifica retroattiva tecnicamente proibitiva.
 		\item \textbf{Efficienza verificabile:} i nodi validatori possono ricalcolare la sequenza hash per verificare l’autenticità e l’ordine temporale degli eventi, senza necessità di accordi esterni.
 	\end{itemize}
@@ -88,7 +88,7 @@
 	\end{itemize}
 	
 	\section{Tower BFT}
-	Tower BFT rappresenta il meccanismo di consenso ibrido che integra il Proof of History (PoH) con il Proof of Stake (PoS) in un sistema che ricava ispirazione dai principi del Practical Byzantine Fault Tolerance (PBFT). In questo capitolo si analizzano i principi alla base di tale approccio, evidenziandone le caratteristiche chiave e i vantaggi in termini di sicurezza e scalabilità.
+	Tower BFT rappresenta il meccanismo di consenso ibrido che integra il Proof of History (PoH) con il Proof of Stake (PoS) in un sistema che ricava ispirazione dai principi del Practical Byzantine Fault Tolerance (PBFT). In questo capitolo, analizzerò in dettagli i principi fondamentali alla base di Tower BFT, evidenziandone le caratteristiche chiave, i vantaggi in termini di sicurezza e scalabilità.
 	
 	\subsection{Integrazione tra PoH e PBFT}
 	Il meccanismo Tower BFT sfrutta il flusso temporale generato da PoH per fornire una base sicura e verificabile sull'ordine degli eventi, integrando i principi del PBFT per raggiungere il consenso in presenza di possibili nodi malevoli. In particolare:
@@ -130,74 +130,74 @@
 	
 	\section{Turbine}
 	
-	Turbine è il protocollo di propagazione dei dati di Solana, progettato per distribuire rapidamente i blocchi su una rete di migliaia di nodi con latenza minima e uso efficiente della banda. In questo capitolo analizzo in dettaglio le componenti tecniche di Turbine, illustrandone il funzionamento, le ottimizzazioni di affidabilità e il contributo alla scalabilità della rete.
+	Turbine è il protocollo di propagazione dei dati di Solana, progettato per distribuire rapidamente i blocchi su una rete di migliaia di nodi con latenza minima e uso efficiente della banda. In questo capitolo analizzerò in dettaglio le componenti tecniche di Turbine, illustrandone il funzionamento, le ottimizzazioni di affidabilità e il suo contributo alla scalabilità e resilienza dell'intera rete.
 	
 	\subsection{Suddivisione in pacchetti e trasmissione a fanout}
-	Il primo passo di Turbine è frammentare ogni blocco in pacchetti di dimensione fissa (tipicamente 64 KiB).  
+	Il primo passo, nel funzionamento di Turbine, è la frammentazione di ogni blocco di transazioni in pacchetti di dimensione fissa, tipicamente 64 KiB. Questa modularità è essenziale per l'efficienza della propagazione.  
 	\begin{itemize}
-		\item \textbf{Chunking dei blocchi:} il blocco viene suddiviso in più chunk indipendenti, ognuno numerato e identificato in modo univoco.
-		\item \textbf{Albero di fanout:} il leader invia ciascun chunk a un sottoinsieme di validatori (primo livello), i quali a loro volta lo ritrasmettono al livello successivo, e così via, in una struttura ad albero multi-livello.
-		\item \textbf{Complessità logaritmica:} con un fanout di \(f\) nodi per livello, la propagazione raggiunge \(N\) nodi in circa \(\log_f N\) salti, riducendo drasticamente il numero di connessioni dirette necessarie.
+		\item \textbf{Chunking dei blocchi:} un blocco completo di transazioni viene suddiviso in più chunk indipendenti. Ogni chunk viene numerato e identificato in modo univoco, permettendo ai validatori di ricostruire il blocco originale anche se i chunk arrivano fuori ordine o da fonti diverse.
+		\item \textbf{Albero di fanout:} il leader attuale della rete, dopo aver creato e firmato un nuovo blocco, non lo invia direttamente a tutti i validatori in una singola trasmissione, ma invia ciascun chunk ad un sottoinsieme ristretto di validatori (che risiedono nel "primo livello" dell'albero di fanout) che, a loro volta, ritrasmettono il chunk ad un altro sottoinsieme di validatori (nel "secondo livello"), e così via, creando una struttura ad albero multi-livello. Ogni nodo riceve i dati solo da un numero limitato di peer, distribuendo il carico di banda e computazionale su tutta la rete.
+		\item \textbf{Complessità logaritmica:} con un "fanout" di \(f\) nodi per livello (cioè, ogni nodo ritrasmette a f nodi), la propagazione completa di un blocco raggiunge \(N\) nodi in circa \(\log_f N\) salti. Questo riduce drasticamente il numero di connessioni dirette e la latenza complessiva necessaria per distribuire il blocco all'intera rete, rendendo Turbine altamente scalabile anche con decine di migliaia di validatori. Ad esempio, con un fanout di 8, per raggiungere 4096 nodi bastano 4 salti, anziché 4096 connessioni dirette.
 	\end{itemize}
 	
 	\subsection{Codici di correzione d’errore e robustezza}
 	Per garantire che i validatori ricostruiscano l’intero blocco anche in presenza di perdita di pacchetti, Turbine integra codici di correzione d’errore:
 	\begin{itemize}
-		\item \textbf{Reed-Solomon encoding:} prima della trasmissione, i chunk sono codificati con schemi Reed-Solomon, permettendo la ricostruzione del blocco anche se fino al 33\% dei pacchetti è andato perduto.
-		\item \textbf{Ridondanza controllata:} il leader può inviare pacchetti supplementari a nodi selezionati per migliorare l’affidabilità nei percorsi più soggetti a perdita.
-		\item \textbf{Verifica integrità:} ogni chunk include checksum crittografici per consentire ai validatori di rilevare e richiedere eventuali pacchetti corrotti o mancanti.
+		\item \textbf{Reed-Solomon encoding:} prima della trasmissione, i chunk del blocco vengono codificati utilizzando schemi di codifica Reed-Solomon. Questa è una tecnica di codifica a correzione d'errore che aggiunge dati di parità ridondanti ai chunk originali. La potenza di Reed-Solomon risiede nella sua capacità di permettere la ricostruzione del blocco originale anche se una percentuale significativa dei pacchetti (fino al 33\%) è andata perduta durante la trasmissione.
+		\item \textbf{Ridondanza controllata:} il leader ha la capacità di inviare pacchetti supplementari o dati di parità aggiuntivi a nodi selezionati, in particolare quelli che potrebbero trovarsi in percorsi di rete più soggetti a perdita di pacchetti. Questa "ridondanza controllata" mira a migliorare ulteriormente l'affidabilità della propagazione nelle aree più critiche della rete.
+		\item \textbf{Verifica integrità:} ogni chunk include checksum crittografici che consentono ai validatori di rilevare immediatamente se un pacchetto è stato corrotto durante la trasmissione o se è mancante. Nel caso in cui viene rilevato un errore, il validatore può richiedere selettivamente il pacchetto corrotto o mancante ad altri peer, evitando di dover scartare l'intero blocco e attendere una ritrasmissione completa.
 	\end{itemize}
 	
 	\subsection{Ottimizzazione della banda e latenza}
 	Turbine ottimizza l’uso della rete e minimizza la latenza di propagazione dei blocchi grazie a:  
 	\begin{itemize}
-		\item \textbf{UDP streaming:} utilizzo di UDP anziché TCP per evitare hand-shake e back-off di congestione.
-		\item \textbf{Adaptive fanout:} il numero di peer per livello può essere adattato dinamicamente in base alla topologia di rete e alla latenza misurata.
-		\item \textbf{Parallelismo multi-threaded:} i validatori processano e ritrasmettono i pacchetti in thread separati, evitando colli di bottiglia in I/O.
+		\item \textbf{UDP streaming:} Turbine sfrutta UDP, anziché TCP, dato che, essendo un protocollo "connectionless", non richiede handshake per stabilire una connessione né meccanismi di back-off di congestione. Sebbene UDP non garantisca la consegna dei pacchetti o l'ordine, esso riduce significativamente l'overhead di comunicazione e la latenza per la trasmissione di grandi volumi di dati, rendendolo ideale per la propagazione rapida di blocchi frammentati. Le perdite di pacchetti vengono gestite dai codici Reed-Solomon e dalle richieste selettive, anziché dal ritrasmissione automatica e sequenziale di TCP.
+		\item \textbf{Adaptive fanout:} il numero di peer per livello può essere adattato dinamicamente in base alla topologia di rete ed alla latenza misurata. In una rete con bassa latenza ed alta connettività, un fanout maggiore può accelerare la propagazione. Al contrario, in condizioni di rete meno ideali, un fanout più conservativo può prevenire il congestionamento. 
+		\item \textbf{Parallelismo multi-threaded:} i validatori sono progettati per processare e ritrasmettere i pacchetti di Turbine in thread separati. Questo approccio multi-threaded previene la creazione di colli di bottiglia nelle operazioni di I/O. Mentre un thread riceve nuovi pacchetti, un altro può contemporaneamente applicare la decodifica Reed-Solomon e un terzo può preparare i pacchetti per la ritrasmissione. Questo parallelismo interno massimizza l'utilizzo delle risorse della CPU e della banda.
 	\end{itemize}
 	
 	\subsection{Contributo alla scalabilità e resilienza di rete}
 	L’integrazione di Turbine nel sistema di Solana garantisce:  
 	\begin{itemize}
-		\item \textbf{Scalabilità su larga scala:} la complessità \(\mathcal{O}(\log N)\) permette di crescere a decine di migliaia di validatori senza aumenti esponenziali di latenza.
-		\item \textbf{Tolleranza ai guasti di rete:} grazie ai codici di correzione e al fanout multilivello, la rete rimane operativa anche con perdite significative di pacchetti.
-		\item \textbf{Throughput elevato:} riducendo l’overhead di trasmissione e sfruttando UDP, Turbine contribuisce a sostenere il throughput di decine di migliaia di transazioni al secondo.
+		\item \textbf{Scalabilità su larga scala:} la complessità \(\mathcal{O}(\log N)\), rispetto al numero di nodi, permette di scalare a decine di migliaia di validatori senza che la latenza di propagazione aumenti esponenzialmente.
+		\item \textbf{Tolleranza ai guasti di rete:} grazie ai codici di correzione e al fanout multilivello, la rete rimane operativa ed i blocchi possono essere ricostruiti anche in presenza di perdite significative di pacchetti (fino al 33\%) o di fallimenti parziali della rete. Questa robustezza è fondamentale per la stabilità e la disponibilità della rete in casi reali ed imprevedibili.
+		\item \textbf{Throughput elevato:} riducendo l'overhead di trasmissione (grazie ad UDP) e sfruttando in modo efficiente la banda, Turbine contribuisce in modo diretto a sostenere il throughput di decine di migliaia di transazioni al secondo. Senza di esso, la latenza di propagazione ed i limiti di banda sarebbero dei problemi impossibili da risolvere per la scalabilità di Solana.
 	\end{itemize}
 	
 	\section{Gulf Stream}
 	
-	Il modulo Gulf Stream di Solana sostituisce la classica mempool con un sistema dinamico di forwarding delle transazioni verso i validatori designati per i futuri slot. Questo approccio permette di ridurre drasticamente la latenza di ordinamento e di alleggerire il carico di memoria sui nodi. In questo capitolo, analizzo in dettaglio il funzionamento tecnico di Gulf Stream, il suo effetto sulla pipeline di esecuzione e la resilienza che conferisce alla rete.
+	Il modulo Gulf Stream di Solana sostituisce la classica mempool con un sistema dinamico di forwarding delle transazioni verso i validatori designati per i futuri slot. Questo approccio permette di ridurre drasticamente la latenza di ordinamento e di alleggerire il carico di memoria sui nodi. In questo capitolo, approfondirò il funzionamento tecnico di Gulf Stream, il suo impatto sulla pipeline di esecuzione delle transazioni e la resilienza che conferisce all'intera rete.
 	
 	\subsection{Funzionamento di forwarding anticipato}
 	\begin{itemize}
-		\item \textbf{Predizione del leader:} grazie alla sequenza PoH, ogni nodo conosce in anticipo l’identità del validatore che avrà la leadership nei prossimi slot.
+		\item \textbf{Predizione del leader:} grazie alla sequenza PoH, ogni nodo validatore nella rete è in grado di conoscere in anticipo l'identità del validatore che assumerà il ruolo di leader per i prossimi slot di produzione di blocchi. Non è necessaria una comunicazione aggiuntiva per identificare il prossimo produttore di blocchi.
 		\item \textbf{Invio diretto delle transazioni:} i client inoltrano le transazioni direttamente al validatore futuro, firmandole con un recente hash PoH come nonce temporale.
 		\item \textbf{Validazione preliminare:} il validatore ricevente verifica immediatamente la validità delle firme e dei requisiti di account, preparando le transazioni prima ancora di proporle in un blocco.
 	\end{itemize}
 	
 	\subsection{Eliminazione della mempool e cache locale}
 	\begin{itemize}
-		\item \textbf{Nessuna mempool pubblica:} non esiste più un’area di attesa globale; ogni validatore mantiene solo una cache delle transazioni attese per il proprio slot.
-		\item \textbf{Caching distribuito:} le transazioni circolano attraverso un grafo di caching che permette ai validatori vicini di condividere rapidamente liste di transazioni non ancora incluse.
-		\item \textbf{Pulizia automatica:} al termine di uno slot, le transazioni non elaborate vengono scartate o re-inoltrate automaticamente ai leader successivi.
+		\item \textbf{Nessuna mempool pubblica:} non esiste un'area di attesa globale e condivisa per le transazioni in sospeso. Questo elimina il rischio di una mempool congestionata, che può portare a tempi di attesa prolungati per le transazioni ed a costi elevati in periodi di alta domanda. Ogni validatore mantiene solo una "cache locale" delle transazioni che si aspetta di processare per il proprio slot di leadership e per gli slot futuri vicini.
+		\item \textbf{Caching distribuito:} le transazioni circolano attraverso un grafo di caching che permette ai validatori vicini di condividere rapidamente liste di transazioni non ancora incluse. Questo assicura che una transazione non dipenda da un singolo punto di fallimento per la sua inclusione e che possa essere re-inoltrata se il leader previsto non riesce a includerla.
+		\item \textbf{Pulizia automatica:} al termine di uno slot, le transazioni non elaborate vengono automaticamente scartate dalla cache locale del validatore o re-inoltrate ai leader successivi previsti. Questo meccanismo di "garbage collection" automatica previene l'accumulo di transazioni obsolete e mantiene la memoria dei nodi ottimizzata.
 	\end{itemize}
 	
 	\subsection{Vantaggi prestazionali}
 	\begin{itemize}
-		\item \textbf{Riduzione della latenza:} le transazioni possono essere eseguite non appena inizia lo slot, anziché attendere la conferma dell’inclusione in mempool.
-		\item \textbf{Maggiore throughput:} il caricamento anticipato consente di sfruttare meglio le risorse di calcolo e di rete, incrementando il numero di transazioni processabili per secondo.
-		\item \textbf{Minore contesa di risorse:} poiché ogni validatore riceve solo il proprio sottoinsieme di transazioni, si riducono i conflitti di accesso e gli overhead di sincronizzazione.
+		\item \textbf{Riduzione della latenza:} le transazioni possono essere eseguite non appena inizia lo slot del leader designato, anziché attendere la conferma dell’inclusione in mempool pubblica. Questo porta a tempi di consenso quasi istantanei delle transazioni dal punto di vista dell'utente, migliorando l'esperienza generale.
+		\item \textbf{Maggiore throughput:} il caricamento e la validazione anticipata delle transazioni, consentono ai validatori di sfruttare al meglio le proprie risorse di calcolo e di rete. Al posto di dover validare e processare le transazioni in tempo reale al momento della costruzione del blocco, gran parte del lavoro è già stata fatto, incrementando il numero totale di transazioni al secondo.
+		\item \textbf{Minore contesa di risorse:} poiché ogni validatore riceve solo il proprio sottoinsieme di transazioni, si riducono i conflitti di accesso e gli overhead di sincronizzazione che si verificano nelle mempool condivise. Questo permette una gestione più efficiente delle risorse di sistema di ciascun nodo.
 	\end{itemize}
 	
 	\subsection{Tolleranza ai guasti e continuità della rete}
 	\begin{itemize}
-		\item \textbf{Resilienza al fallimento del leader:} se un validatore leader non è raggiungibile, le transazioni vengono automaticamente inoltrate al successivo leader previsto.
-		\item \textbf{Mitigazione del congestionamento:} in caso di picchi transazionali, Gulf Stream bilancia il carico distribuendo le transazioni su più validatori futuri.
-		\item \textbf{Recupero da partizioni di rete:} le cache locali mantengono le transazioni in attesa fino al ripristino della connettività, assicurando che nessun client perda le proprie operazioni.
+		\item \textbf{Resilienza al fallimento del leader:} se un validatore leader non è raggiungibile o fallisce nel produrre un blocco, le transazioni vengono automaticamente reindirizzate ed inoltrate al successivo leader previsto nella sequenza PoH. Questo garantisce che le transazioni non vadano perse e che la rete possa continuare ad andare avanti anche in caso di interruzioni impreviste dei validatori.
+		\item \textbf{Mitigazione del congestionamento:} in caso di picchi transazionali o di elevata domanda di rete, Gulf Stream bilancia dinamicamente il carico distribuendo le transazioni su più validatori futuri. Questo previene la formazione di colli di bottiglia e di "mempool" che si gonfiano e rallentano l'intera rete, come avviene in altre blockchain.
+		\item \textbf{Recupero da partizioni di rete:} le cache locali mantengono le transazioni in attesa fino al ripristino della connettività, in caso di partizioni temporanee della rete. Ciò assicura che nessun client perda le proprie operazioni anche in condizioni di rete meno ideali, garantendo una maggiore affidabilità.
 	\end{itemize}
 	
 	\section{Sealevel}
-	Sealevel è il motore di esecuzione parallela degli smart contract di Solana, progettato per sfruttare appieno l’hardware moderno e permettere un throughput elevato. In questo capitolo, approfondisco la sua architettura, i modelli di concorrenza adottati e le implicazioni per la scalabilità dell’intera rete.
+	Sealevel è il motore di esecuzione parallela degli smart contract di Solana, progettato per sfruttare appieno l’hardware moderno e permettere un throughput elevato. In questo capitolo, parlerò in dettaglio della sua architettura rivoluzionaria, dei modelli di concorrenza adottati e delle implicazioni profonde che ha per la scalabilità dell'intera rete Solana.
 	
 	\subsection{Motivazioni ed architettura}
 	L’esecuzione degli smart contract tradizionalmente segue un modello sequenziale, che limita drasticamente il throughput. Sealevel rompe questo paradigma introducendo un modello completamente parallelo:
@@ -228,25 +228,24 @@
 	
 	\subsection{Compatibilità con il modello Solana}
 	L’integrazione di Sealevel nel sistema Solana è resa possibile dal particolare modello di "Account-based architecture" e dalla programmazione deterministica degli smart contract:
-	
 	\begin{itemize}
-		\item \textbf{Programmazione via BPF (Berkeley Packet Filter):} gli smart contract scritti per Sealevel sono compilati in BPF, un linguaggio sicuro ed ad alte prestazioni che può essere eseguito in ambienti isolati.
-		\item \textbf{Chiamate incrociate asincrone:} Sealevel consente a un programma di invocare altri programmi in maniera asincrona, pur mantenendo la sicurezza dell’esecuzione.
-		\item \textbf{Isolamento della memoria:} l’esecuzione dei contratti è Sandboxed: ogni programma ha accesso solo agli account e alla memoria dichiarati inizialmente.
+		\item \textbf{Programmazione via BPF (Berkeley Packet Filter):} gli smart contract scritti per Sealevel sono compilati in BPF, un linguaggio di basso livello, sicuro ed ad alte prestazioni che può essere eseguito in ambienti isolati (Sandboxed) all'interno del kernel del sistema operativo. Questa scelta garantisce un'esecuzione efficiente e sicura, poiché il codice BPF ha accesso limitato e controllato alle risorse di sistema.
+		\item \textbf{Chiamate incrociate asincrone:} Sealevel consente a un programma di invocare altri programmi in maniera asincrona, permettendo di interagire tra loro in modo efficiente pur mantenendo la sicurezza dell'esecuzione.
+		\item \textbf{Isolamento della memoria:} l’esecuzione dei contratti è Sandboxed: ogni programma ha accesso solo agli account ed alla memoria specificatamente dichiarati all'inizio della transazione. Questo isolamento impedisce che un programma malevolo possa accedere o modificare dati a cui non è autorizzato, migliorando drasticamente la sicurezza dell'intera rete e proteggendo gli account degli utenti.
 	\end{itemize}
 	
 	\subsection{Vantaggi}
 	\begin{itemize}
-		\item \textbf{Scalabilità orizzontale:} l’esecuzione parallela permette di scalare il throughput linearmente con il numero di core disponibili.
-		\item \textbf{Riduzione della latency:} le transazioni indipendenti vengono eseguite simultaneamente, riducendo drasticamente il tempo medio di conferma.
-		\item \textbf{Efficienza computazionale:} il modello di "Compute Budgeting" evita l’utilizzo eccessivo delle risorse, permettendo un uso efficiente dell’hardware.
+		\item \textbf{Scalabilità orizzontale:} l’esecuzione parallela delle transazioni permette di scalare il throughput della rete quasi linearmente con l'aumento del numero di core CPU e GPU disponibili sui validatori. Man mano che l'hardware diventa più potente, anche la capacità di elaborazione di Solana aumenta proporzionalmente.
+		\item \textbf{Riduzione della latenza:} le transazioni indipendenti vengono eseguite simultaneamente anziché sequenzialmente, riducendo drasticamente il tempo medio di conferma per la maggior parte delle transazioni.
+		\item \textbf{Efficienza computazionale:} il modello di "Compute Budgeting" evita l’utilizzo eccessivo delle risorse computazionali. Le transazioni vengono interrotte se superano il loro budget, garantendo che l'hardware sia utilizzato in modo efficiente e che la rete non venga rallentata da calcoli inutili o malevoli.
 	\end{itemize}
 	
 	\subsection{Limiti}
 	\begin{itemize}
-		\item \textbf{Conflitti di scrittura:} Le transazioni che modificano lo stesso account restano soggette a serializzazione.
-		\item \textbf{Programmazione più complessa:} Gli sviluppatori devono dichiarare in anticipo tutti gli account usati, il che rende la logica dei programmi più rigida.
-		\item \textbf{Debugging e Testing:} La concorrenza introduce sfide aggiuntive per il testing predittivo di smart contract complessi.
+		\item \textbf{Conflitti di scrittura:} le transazioni che modificano lo stesso account (cioè, hanno un write set che si sovrappone) devono necessariamente essere eseguite in modo seriale. Questo è un requisito fondamentale per mantenere la coerenza dello stato. Sebbene Sealevel massimizzi il parallelismo dove possibile, i conflitti di scrittura possono ancora creare colli di bottiglia in applicazioni ad alta contesa.
+		\item \textbf{Programmazione più complessa:} gli sviluppatori devono dichiarare esplicitamente tutti gli account che un programma intende leggere o scrivere in anticipo, il che rende la logica di programmazione più rigida e meno flessibile rispetto a modelli in cui gli accessi agli account possono essere determinati dinamicamente. Questo può aumentare la complessità dello sviluppo di smart contract su Solana.
+		\item \textbf{Debugging e Testing:} la natura parallela di Sealevel introduce sfide aggiuntive per il debugging e testing predittivo di smart contract complessi. Gli sviluppatori devono adottare metodologie di test più sofisticate per garantire la robustezza dei loro programmi.
 	\end{itemize}
 	
 	\section{Pipelining}
@@ -267,35 +266,29 @@
 	
 	\subsection{Vantaggi}
 	\begin{itemize}
-		\item \textbf{Riduzione della latenza:} il pipelining elimina i tempi morti tra le fasi, permettendo un tempo di blocco inferiore al secondo anche in condizioni di rete non ideali.
-		\item \textbf{Parallelismo a più livelli:} ogni fase gira in parallelo su thread e core separati, garantendo un elevato throughput sostenuto.
-		\item \textbf{Basso overhead di contesa:} la suddivisione in batch e la pre-analisi delle dipendenze riducono drasticamente i conflitti di accesso allo stato, migliorando la scalabilità orizzontale.
-		\item \textbf{Scalabilità elastica:} aggiungendo risorse (core CPU, GPU, SSD), la pipeline scala automaticamente, supportando l’aumento del carico transazionale senza riprogettare l’architettura.
+		\item \textbf{Riduzione della latenza:} il pipelining elimina i tempi morti tra le diverse fasi di elaborazione, permettendo un tempo di blocco (il tempo tra la produzione di due blocchi consecutivi) inferiore al secondo, anche in condizioni di rete non ideali.
+		\item \textbf{Parallelismo a più livelli:} ogni fase della pipeline gira in parallelo su thread e core separati, garantendo un elevato throughput sostenuto. Questo approccio multi-livello al parallelismo (dalla verifica delle firme, all'esecuzione degli smart contract) è ciò che consente a Solana di gestire un volume di transazioni significativamente più elevato rispetto ad altre blockchain.
+		\item \textbf{Basso overhead di contesa:} la suddivisione in batch e la pre-analisi delle dipendenze (grazie a Sealevel) riducono drasticamente i conflitti di accesso allo stato, migliorando la scalabilità orizzontale. Questo minimizza i rallentamenti dovuti a "lock" o "mutex" e migliora la scalabilità orizzontale, permettendo al sistema di crescere con l'aggiunta di più risorse computazionali.
+		\item \textbf{Scalabilità elastica:} aggiungendo componenti hardware (core CPU, GPU, SSD), la pipeline scala automaticamente. Non è necessaria una riprogettazione complessa dell'architettura per supportare un aumento del carico transazionale, rendendo Solana capace di adattarsi alle crescenti esigenze della rete.
 	\end{itemize}
 	
 	\subsection{Limiti}
 	\begin{itemize}
-		\item \textbf{Bilanciamento dei stage:} uno stage troppo lento (ad esempio operazioni I/O su SSD saturi) può ridurre l’efficienza complessiva.
-		\item \textbf{Gestione degli errori:} rollback e retry di singoli batch in caso di fallimenti devono essere gestiti con attenzione per evitare inconsistenze di stato.
-		\item \textbf{Complessità implementativa:} l’overhead di organizzazione delle pipeline e di sincronizzazione delle code introduce complessità nel codice del validator.
+		\item \textbf{Bilanciamento dei stage:} l'efficienza complessiva di una pipeline è determinata dal suo stadio più lento. Se uno stage diventa troppo lento (ad esempio, a causa di operazioni I/O su SSD saturi o di un eccessivo carico computazionale su un singolo core), può ridurre l'efficienza complessiva dell'intera pipeline, rallentando il flusso di transazioni. È fondamentale un bilanciamento costante delle risorse e capacità di ogni stadio.
+		\item \textbf{Gestione degli errori:} se un errore si verifica in uno stadio avanzato, per un particolare batch di transazioni, il rollback ed il retry di quel singolo batch devono essere gestiti con attenzione per evitare inconsistenze di stato o di propagazione, specialmente in un ambiente decentralizzato.
+		\item \textbf{Complessità implementativa:} l'organizzazione delle pipeline, la sincronizzazione delle code tra i diversi stage e la gestione degli stati intermedi introduce una notevole complessità nel codice del validatore. Questo richiede una progettazione software robusta e una manutenzione attenta per garantire stabilità e prestazioni.
 	\end{itemize}
 	
 	\subsection{Contributo alla Scalabilità di Rete}
 	Il Pipelining rappresenta uno degli elementi principali per il modello “L1-native scaling” adottato da Solana:  
 	\begin{itemize}
-		\item Consente di mantenere elevato "per-core utilization", massimizzando le prestazioni offerte dall’hardware disponibile.  
-		\item Riduce drasticamente i tempi di "end-to-end processing" di ogni transazione, permettendo a Solana di avvicinarsi ai 5.000–10.000 TPS effettivi in mainnet-beta e di scalare fino a decine di migliaia di TPS su infrastrutture ottimizzate.  
-		\item Si integra perfettamente con PoH, Gulf Stream e Cloudbreak, fornendo un flusso continuo di dati e transazioni che scorre attraverso la rete senza strozzature significative.  
+		\item Consente di mantenere un elevato utilizzo delle risorse computazionali per ogni core disponibile. Massimizzando il lavoro svolto da ogni unità di elaborazione, Solana può sfruttare al meglio le prestazioni offerte dall'hardware moderno.
+		\item Questo meccanismo riduce drasticamente i tempi di elaborazione "end-to-end" di ogni singola transazione. Ciò permette a Solana di avvicinarsi a cifre di 5.000–10.000 transazioni al secondo (TPS) effettive nella sua mainnet-beta e di scalare fino a decine di migliaia di TPS su infrastrutture ottimizzate, posizionandosi come una delle blockchain più veloci.
+		\item Si integra perfettamente con altri moduli chiave come PoH, Gulf Stream e Cloudbreak. Questo crea un flusso continuo e armonizzato di dati e transazioni che scorre attraverso la rete senza strozzature significative, ottimizzando ogni fase del ciclo di vita di una transazione e garantendo che tutti i componenti lavorino insieme per massimizzare il throughput.
 	\end{itemize}
 	
 	\section{Cloudbreak (Accounts database)}
-	Cloudbreak é un database progettato per gestire milioni di account in maniera veloce e scalabile. Il compito principale di Cloudbreak é tenere traccia dello stato degli account. Ogni volta che viene eseguita una transazione, i profili coinvolti vengono letti e aggiornati nel minor tempo possibile. In questo capitolo, entreró in dettaglio su come Cloudbreak riesce a raggiungere questi obiettivi tramite una serie di tecniche:
-	
-	\begin{itemize}
-		\item \textbf{Memory-mapped files}: anziché caricare tutto in memoria o scrivere ogni volta su disco, Cloudbreak lascia che sia il sistema operativo a gestire la memoria, mappando direttamente i file su disco in modo da ridurre i tempi di accesso.
-		\item \textbf{Copy-on-write}: quando un account viene aggiornato, i dati non vengono sovrascritti ma copiati in una nuova posizione, cosí da evitare conflitti e mantenere sempre una versione coerente dello stato.
-		\item \textbf{Indicizzazione efficiente}: ogni account ha chiave pubblica che viene indicizzata per trovare rapidamente la posizione dei suoi dati nel database.
-	\end{itemize}
+	Cloudbreak é un database progettato per gestire milioni di account in maniera veloce e scalabile. Il compito principale di Cloudbreak é tenere traccia dello stato degli account. Ogni volta che viene eseguita una transazione, i profili coinvolti vengono letti e aggiornati nel minor tempo possibile. In questo capitolo, entreró in dettaglio sul funzionamento di Cloudbreak, sulla pulizia e gestione dello spazio e sulla sua scalabilità, consistenza e resilienza.
 	
 	\subsection{Funzionamento di Cloudbreak}
 	Per comprendere meglio Cloudbreak, é utile analizzare il suo funzionamento durante l'esecuzione di un blocco. Ogni validatore lo utilizza per leggere lo stato degli account coinvolti in una transazione, aggiornare tali dati e garantire che il risultato sia consistente e persistente nel tempo, applicando i seguenti passaggi:
@@ -307,12 +300,11 @@
 	\end{enumerate}
 	
 	\subsection{Pulizia e gestione dello spazio}
-	Cloudbreak include una serie di meccanismi per mantenere il database leggero ed efficiente:
+	Cloudbreak include una serie di meccanismi per la pulizia e gestione dello spazio di archiviazione per evitare che il database diventi ingombrante e lento:
 	\begin{itemize}
-		\item \textbf{Flushing}: trasferisce i dati temporanei dalla RAM al disco.
-		\item \textbf{Cleaning}: elimina vecchie versioni dei dati non più utilizzate.
-		\item \textbf{Shrinking}: riduce le dimensioni dei file rimuovendo porzioni inutilizzate.
-		\item \textbf{Purging}: cancella completamente i dati legati a rami della blockchain che sono stati abbandonati.
+		\item \textbf{Archiviare lo storico}: Cloudbreak, nonostrante gestisca lo stato corrente, non è responsabile dello storage a lungo termine dell'intera storia delle transazioni. Questo compito è delegato agli Archivers, che scaricano i dati storici e li conservano in modo decentralizzato. Questa separazione dei compiti alleggerisce il carico sui validatori e sul database Cloudbreak, permettendo a quest'ultimo di concentrarsi sulla gestione dello stato più recente.
+		\item \textbf{Garbage Collection selettiva}: Cloudbreak implementa meccanismi di "garbage collection" per rimuovere account o dati obsoleti che non sono più necessari per il funzionamento dello stato corrente. Questi processi sono progettati per essere efficienti e per non interferire con le operazioni di transazione ad alta velocità.
+		\item \textbf{Stato "Compact"}: l'obiettivo è mantenere lo stato di Cloudbreak il più compatto possibile. Questo include l'ottimizzazione delle strutture dati e degli indici per minimizzare l'ingombro su disco e massimizzare la velocità di accesso.
 	\end{itemize}
 	
 	\subsection{Scalabilità orizzontale, Consistenza e Resilienza di Cloudbreak}
@@ -327,13 +319,12 @@
 	
 	\section{Archivers}
 	
-	Gli Archivers sono nodi specializzati incaricati di conservare la storia completa del ledger, alleggerendo i validatori dal carico associato alla memorizzazione persistente dei dati. In questo capitolo, entrerò in dettaglio sulle componenti crittografiche e di sistema che governano il loro funzionamento, illustrando i meccanismi di frammentazione, verifica e resilienza.
+	Gli Archivers sono nodi specializzati incaricati di conservare la storia completa del ledger, alleggerendo i validatori dal carico associato alla memorizzazione persistente dei dati. In questo capitolo, approfondirò le componenti crittografiche e di sistema che governano il loro funzionamento, illustrando i meccanismi di frammentazione, verifica e resilienza.
 	
 	\subsection{Funzionamento: Erasure Coding e Proofs of Replication}
 	\begin{itemize}
-		\item \textbf{Frammentazione del ledger:} ogni blocco storico viene suddiviso in frammenti di dimensioni fisse e codificato con "Erasure Codes" (tipicamente Reed–Solomon). Questo permette di ricostruire l’intero blocco anche se solo una parte dei frammenti è disponibile.
-		\item \textbf{Distribuzione dei frammenti:} i frammenti codificati vengono assegnati in modo pseudo‑casuale agli Archivers mediante un meccanismo deterministico derivato da PoH, garantendo un’equa distribuzione e riducendo i rischi di centralizzazione.
-		\item \textbf{Proofs of Replication (PoRep):} ogni Archiver, periodicamente, genera una prova crittografica che attesta di possedere i frammenti a lui assegnati. Le PoRep si basano su "challenge" derivate dalla sequenza PoH e su tecniche di "merkleization" dei dati (trasformare un insieme di dati in un Merkle tree).
+		\item \textbf{Erasure Coding:} quando un blocco di dati storici viene scaricato dal leader e passato agli Archivers, viene applicato, su di esso, una tecnica di "Erasure Coding" (codifica a cancellazione), come i codici Reed-Solomon. Questa tecnica frammenta i dati in più parti e genera dati di parità ridondanti, in modo che il file originale possa essere ricostruito, anche se una certa percentuale di queste parti dovesse essere persa o danneggiata. Questo garantisce un'elevata disponibilità e robustezza dei dati storici archiviati, anche se alcuni Archivers dovessero diventare inattivi o malevoli.
+		\item \textbf{Proofs of Replication (PoRep):} per garantire che gli Archivers stiano effettivamente immagazzinando i dati in modo corretto e completo, Solana utilizza meccanismi di PoRep, una prova crittografica che dimostra che un Archiver ha immagazzinato correttamente un'intera porzione di dati specifici. Questo meccanismo previene attacchi come "Sybil attacks" (in cui un singolo attore malevolo simula di essere più nodi per controllare una porzione maggiore della rete) o "outsourcing attacks" (in cui un Archiver dichiara di immagazzinare dati ma in realtà li ha eliminati o non li ha mai scaricati). Gli Archivers devono produrre periodicamente queste prove verificabili per dimostrare la loro onestà e la loro continua conservazione dei dati.
 	\end{itemize}
 	
 	\subsection{Integrazione con PoH}
@@ -345,20 +336,24 @@
 	
 	\subsection{Verifica periodica e Gestione delle contromisure}
 	\begin{itemize}
-		\item \textbf{Controlli randomizzati:} le challenge non seguono un calendario prevedibile, ma sono pseudo‑randomizzate attraverso PoH, aumentando la difficoltà di attacco mirato.
-		\item \textbf{Penalità e ricompense:} Archivers inattivi o che falliscono le PoRep subiscono slashing parziale dello stake o esclusione temporanea dalla rete, mentre quelli affidabili guadagnano premi proporzionali alle proof inviate.
+		\item \textbf{Verifica periodica (Challenges):} le challenge non seguono un calendario prevedibile, ma sono pseudo‑randomizzate attraverso PoH, aumentando la difficoltà di attacco mirato. I validatori o altri nodi della rete possono inviare challenges casuali agli Archivers, chiedendo loro di fornire Proofs of Replication per specifiche porzioni di dati che affermano di detenere. Archivers inattivi o che falliscono le PoRep subiscono slashing parziale dello stake o esclusione temporanea dalla rete, mentre quelli affidabili guadagnano premi proporzionali alle proof inviate.
 		\item \textbf{Rotazione dei frammenti:} il sistema riassegna, periodicamente, i frammenti agli Archivers per mitigare l’accumulo di dati non utilizzati e per ridurre il rischio di compromissione mirata.
+		\item \textbf{Gestione delle contromisure:} In caso di Archivers malevoli o non responsivi, i dati mancanti o compromessi possono essere recuperati da altri Archivers che detengono copie ridondanti (grazie all'Erasure coding). Nuovi Archivers possono essere reclutati e incentivati a replicare i dati necessari, garantendo che la disponibilità della storia del ledger non sia compromessa.
 	\end{itemize}
 	
 	\subsection{Tolleranza ai guasti e Disponibilità}
 	\begin{itemize}
-		\item \textbf{Ridondanza:} Grazie agli "Erasure Codes", la rete può tollerare la perdita fino a \(k\) frammenti per blocco (dove \(k\) è scelto secondo il livello di ridondanza configurato) senza compromettere la capacità di recupero.
+		\item \textbf{Ridondanza:} Grazie agli "Erasure Codes", la rete può tollerare la perdita fino a \(k\) frammenti per blocco (dove \(k\) è scelto secondo il livello di ridondanza configurato) senza compromettere la capacità di recupero. Le copie ridondanti ed i dati di parità consentono la ricostruzione del ledger.
 		\item \textbf{Recupero dinamico:} In caso di crash o malfunzionamento di un Archiver, gli altri nodi specializzati restituiscono rapidamente i frammenti mancanti, supportati dal meccanismo PoRep e dai challenge PoH.
 		\item \textbf{Scalabilità orizzontale:} È possibile aggiungere nuovi Archivers "on the fly": una volta sincronizzati con l’ultimo stato PoH, ricevono i frammenti e iniziano subito a generare PoRep, estendendo linearmente la capacità di archiviazione dello storico.
 	\end{itemize}
 	
 	\subsection{Contributo alla scalabilità della rete}
-	Gli Archivers permettono di mantenere una blockchain di dimensioni crescenti senza sovraccaricare i validatori, garantendo al contempo elevata disponibilità e integrità dei dati storici. La sinergia con PoH e PoRep assicura una conservazione decentralizzata, verificabile e economicamente incentivata.
+	\begin{itemize}
+		\item \textbf{Senza la necessità di archiviare l'intera storia, i validatori possono mantenere le loro risorse dedicate al throughput ed alla latenza delle transazioni correnti.}
+		\item \textbf{Permette una maggiore decentralizzazione:} poiché i requisiti hardware per i validatori sono ridotti (non devono immagazzinare terabyte di dati storici), più attori possono partecipare al consenso, aumentando la decentralizzazione e la sicurezza della rete.
+		\item \textbf{Supporta la crescita esponenziale del ledger:} Man mano che Solana processa sempre più transazioni, la storia del ledger crescerà esponenzialmente. Gli Archivers sono progettati per scalare con questa crescita, fornendo una soluzione di storage sostenibile a lungo termine.
+	\end{itemize}
 	
 	\chapter{Algoritmi crittografici principali}
 	In questo capitolo, vengono analizzati gli algoritmi crittografici principali che supportano il funzionamento e la sicurezza di Solana. In particolare, viene esaminata la pipeline di verifica transazionale, che sfrutta Ed25519 per le firme digitali e SHA-256 per il Proof of History, e si approfondisce il meccanismo di Proof of Replication che, integrando tecniche basate su SeDRAM, si propone come strumento di difesa contro gli attacchi Sybil.
