@@ -363,30 +363,38 @@
 	
 	\subsection{Ed25519 per firme digitali}
 	\begin{itemize}
-		\item \textbf{Efficienza e sicurezza:} Ed25519 è una variante dell'algoritmo a curva ellittica progettata per garantire alte prestazioni ed un elevato grado di sicurezza. Grazie alla sua struttura, permette di generare firme digitali che sono sia compatte che verificabili in maniera rapida.
+		\item \textbf{Efficienza e velocità:} Ed25519 è una variante dell'algoritmo a curva ellittica ed è più veloce nella generazione e verifica delle firme rispetto ad altri algoritmi di firma digitale ampiamente utilizzati (come RSA o ECDSA in alcune configurazioni). Questa rapidità è fondamentale per Solana, che punta a migliaia di transazioni al secondo. I validatori possono verificare in parallelo centinaia di firme Ed25519 in pochi millisecondi, spesso sfruttando le capacità di calcolo parallelo delle GPU.
+		\item \textbf{Sicurezza:} l'algoritmo è costruito su basi matematiche solide ed è resistente ad una vasta gamma di attacchi crittografici noti. La sua sicurezza si basa sulla difficoltà del problema della curva ellittica discreta sulla curva 25519.
 		\item \textbf{Non ripudiabilità e integrità:} l'impiego di Ed25519 assicura che ogni messaggio e transazione siano firmati in modo univoco, impedendo a un partecipante di negare in seguito la propria partecipazione e garantendo l'integrità dei dati trasmessi.
+		\item \textbf{Dimensioni ridotte delle firme:} sono relativamente piccole (64 byte), il che contribuisce a ridurre il "peso" delle transazioni e dei blocchi, ottimizzando l'uso della banda di rete e la capacità di archiviazione.
 	\end{itemize}
 	
 	\subsection{SHA-256 per il PoH}
 	\begin{itemize}
-		\item \textbf{Costruzione di una sequenza temporale:} SHA-256 viene eseguito in modalità iterativa per generare una catena di hash che costituisce la base temporale di PoH. Ogni output della funzione hash diventa input per il successivo ciclo, creando una sequenza ininterrotta e verificabile.
+		\item \textbf{Costruzione di una sequenza temporale:} SHA-256 viene eseguito in modalità iterativa per generare una catena di hash che costituisce la base temporale di PoH. Ogni output della funzione hash diventa input per il successivo ciclo, creando una sequenza ininterrotta e verificabile. Questa sequenzialità garantisce che il tempo sia "inciso" crittograficamente nella sequenza: per avanzare di un passo nel tempo, è necessario completare il calcolo della funzione hash precedente.
 		\item \textbf{Resistenza alle collisioni:} la robustezza di SHA-256, nota per la sua bassa probabilità di collisione, garantisce che ogni step della sequenza sia univoco e resistano ad eventuali tentativi di manipolazione. Questo rende l'ordine degli eventi irreversibile e verificabile in maniera autonoma dai validatori.
+		\item \textbf{Verificabilità rapida:} nonostante la generazione della sequenza PoH sia un processo sequenziale e computazionalmente intensivo (VDF), la verifica della sequenza è rapida. Così, qualsiasi nodo può ricalcolare una porzione della sequenza PoH per verificare la sua autenticità e l'ordine degli eventi senza dover ricalcolare l'intera storia. Questo permette ai validatori di accertare rapidamente la correttezza del PoH generato dal leader.
 	\end{itemize}
 	
 	\section{Proof of Replication (PoRep): SeDRAM e Resistenza agli attacchi Sybil}
-	Il meccanismo di Proof of Replication (PoRep) rappresenta un ulteriore livello di sicurezza e verifica, volto a dimostrare che i dati sono stati replicati in maniera adeguata nei nodi della rete. In questo contesto, il supporto tecnologico fornito da SeDRAM, unitamente a strategie di mitigazione contro gli attacchi Sybil, gioca un ruolo cruciale.
+	Il meccanismo di Proof of Replication (PoRep) rappresenta un ulteriore livello di sicurezza e verifica, che punta a dimostrare che i dati sono stati replicati in maniera adeguata nei nodi della rete. In questo contesto, il supporto tecnologico fornito da SeDRAM, unitamente a strategie di mitigazione contro gli attacchi Sybil, gioca un ruolo cruciale.
 	
 	\subsection{SeDRAM ed Ottimizzazione della replicazione}
 	\begin{itemize}
 		\item \textbf{Memoria ad alte prestazioni:} SeDRAM (Synchronous Dynamic Random Access Memory) viene impiegata per ottimizzare il processo di replicazione dei dati, garantendo tempi di accesso ridotti e una gestione efficiente della memoria. Questo è fondamentale per validare rapidamente la presenza e l'integrità delle repliche.
+		\item \textbf{Generazione efficiente delle prove:} essendo che i PoRep possono essere computazionalmente intensivi, Solana mira a ottimizzare il processo di generazione delle prove per gli Archivers, in modo che possano produrle regolarmente senza un consumo eccessivo di risorse, pur mantenendo un alto livello di sicurezza.
+		\item \textbf{Compressione e frammentazione:} prima dell'archiviazione e della replicazione, i dati storici possono essere compressi e frammentati in unità gestibili. L'Erasure coding (come Reed-Solomon) viene applicato a questi frammenti per creare ridondanza, garantendo che i dati possano essere ricostruiti anche se una porzione degli Archivers fallisce o si comporta malevolmente.
 		\item \textbf{Verifica dell’integrità dei dati:} grazie a SeDRAM, il sistema è in grado di effettuare operazioni di verifica ripetute ed ad alta velocità, assicurando che ogni replica mantenga la stessa struttura ed integrità del dato originale.
+		\item \textbf{Auditability:} gli Archivers devono essere periodicamente "auditati" (verificati) dalla rete. Questo avviene attraverso "challenge" crittografiche che richiedono agli Archivers di dimostrare che possiedono realmente quei dati attraverso la generazione di PoRep. Queste sfide sono leggere per il verificatore e costose per l'Archiver solo se non detiene i dati.
 	\end{itemize}
 	
 	\subsection{Resistenza agli attacchi Sybil}
 	\begin{itemize}
 		\item \textbf{Definizione degli attacchi Sybil:} gli attacchi Sybil si verificano quando un singolo utente crea numerose identità false per ottenere un controllo sproporzionato sulla rete. Questo tipo di attacco può compromettere la sicurezza del sistema, se non adeguatamente contrastato.
-		\item \textbf{Mitigazione tramite PoRep:} il processo di Proof of Replication, unito alla gestione efficiente della memoria tramite SeDRAM, impone un elevato costo computazionale e di risorse per la creazione di repliche false. Quidni, replicare e dimostrare la presenza dei dati in maniera fraudolenta richiede investimenti significativi, rendendo l'attacco meno vantaggioso dal punto di vista economico.
-		\item \textbf{Integrazione con altri meccanismi di sicurezza:} PoRep si integra con il protocollo di consenso e altri strati di sicurezza per rafforzare la resilienza della rete contro la formazione di nodi Sybil.
+		\item \textbf{Mitigazione tramite PoRep:} il processo di Proof of Replication, unito alla gestione efficiente della memoria tramite SeDRAM, impone un elevato costo computazionale e di risorse per la creazione di repliche false. Quindi, replicare e dimostrare la presenza dei dati in maniera fraudolenta richiede investimenti significativi, rendendo l'attacco meno vantaggioso dal punto di vista economico.
+		\item \textbf{Vincolo di spazio fisico:} un PoRep richiede che l'Archiver dimostri di possedere i dati e di averli replicati in modo univoco nello spazio fisico. Questo significa che l'Archiver non può semplicemente affermare di archiviare una copia di dati per ogni identità Sybil che ha creato. Deve invece dimostrare di aver effettivamente utilizzato lo spazio di archiviazione corrispondente per ogni replica. Ciò rende computazionalmente e fisicamente costoso per un attaccante Sybil simulare la detenzione di più copie di dati di quante ne abbia realmente.
+		\item \textbf{Resistenza all'outsourcing:} un altro tipo di attacco che i PoRep sono in grado di contrastare è l'Outsourcing attack, in cui un Archiver promette di memorizzare i dati ma, in realtà, li delega ad un altro Archiver (o li elimina) e poi recupera solo le parti necessarie per rispondere alle sfide. I PoRep sono progettati per richiedere una "prova di conoscenza" dei dati originali combinata con la prova di una replica unica, rendendo difficile l'outsourcing senza essere scoperti.
+		\item \textbf{Integrazione con Proof of Stake:} il sistema di Archivers può anche beneficiare dell'integrazione con un meccanismo di stake, dove essi devono bloccare una certa quantità di token come garanzia della loro onestà. Se falliscono un PoRep o si comportano malevolmente, il loro stake può essere soggetto a Slashing, fornendo un incentivo economico all'onestà e scoraggiante per effettuare attacchi Sybil.
 	\end{itemize}
 	
 	\chapter{Gestione chiavi e Sicurezza della rete}
@@ -413,9 +421,8 @@
 	\section{Rotazione delle chiavi}
 	Solana supporta rotazioni sia automatiche (via smart contract) sia manuali per i wallet, account e validatori. Le motivazioni principali includono:
 	\begin{itemize}
-		\item \textbf{Prevenzione da compromissioni prolungate:} una chiave potenzialmente compromessa, ma non ancora sfruttata può essere neutralizzata grazie alla rotazione.
-		\item \textbf{Auditabilità e accountability:} i meccanismi di aggiornamento delle chiavi sono tracciati on-chain, rendendo possibile le veriche formali.
-		\item \textbf{Integrazione con meccanismi multi-sig e wallet custodial:} questo facilita l'automazione di processi di sicurezza anche in ambienti aziendali.
+		\item \textbf{Prevenzione da compromissioni prolungate:} una chiave che potrebbe essere stata acquisita da un attaccante, ma che non è ancora stata sfruttata, viene efficacemente neutralizzata e resa obsoleta non appena viene sostituita da una nuova chiave. Questo riduce la "finestra di esposizione" di una chiave e limita il tempo durante il quale un attaccante potrebbe agire indisturbato. La rotazione, quindi, non è solo una reazione ad un incidente, ma una strategia di mitigazione del rischio.
+		\item \textbf{Verificabilità ed accountability:} i meccanismi di aggiornamento e rotazione delle chiavi sono progettati per essere registrati on-chain, rendendo possibile le veriche formali. Questa caratteristica è di vitale importanza per scopi di verifica e per garantire la trasparenza. Le organizzazioni e gli utenti possono formalmente verificare quando e come le chiavi sono state modificate, chi ha autorizzato tali modifiche e se le procedure di sicurezza interne sono state rispettate. Questo contribuisce a creare un ecosistema più trasparente ed affidabile.
 	\end{itemize}
 	
 	\section{Mitigazione DDoS con Rate-Limiting crittografico}
@@ -444,8 +451,8 @@
 	
 	\subsection{Metadati cifrati}
 	\begin{itemize}
-		\item \textbf{Crittografia simmetrica AES-GCM:} gli sviluppatori possono cifrare metadati NFT utilizzando AES-GCM, assicurando sia confidenzialità che integrità (tramite tag di autenticazione) prima di caricare i dati on-chain o su IPFS.
-		\item \textbf{Gestione chiavi con derived addresses:} l’accesso ai contenuti cifrati può essere gestito tramite "Program-derived addresses" (PDAs), le quali possono fungere da proxy crittografici autorizzati all’accesso delle chiavi simmetriche.
+		\item \textbf{Crittografia simmetrica AES-GCM:} per la cifratura dei metadati NFT, gli sviluppatori possono utilizzare lo standard di crittografia simmetrica AES in modalità Galois/Counter Mode (GCM). AES-GCM è una scelta robusta e ampiamente adottata per la sua efficienza e sicurezza. Questa modalità assicura la confidenzialità dei dati (rendendoli illeggibili senza la chiave corretta) e garantisce anche la loro integrità ed autenticità tramite un "tag di autenticazione". Ciò significa che qualsiasi tentativo di manomissione dei metadati cifrati verrebbe immediatamente rilevato. Prima di essere caricati on-chain o su sistemi di storage decentralizzati, i metadati sensibili possono essere cifrati, proteggendone la privacy.
+		\item \textbf{Gestione chiavi con derived addresses:} l’accesso ai contenuti cifrati può essere gestito in modo intelligente e sicuro attraverso l'uso di "Program-derived addresses" (PDAs). Sono indirizzi che non hanno una chiave privata associata nel senso tradizionale, ma la cui proprietà è derivata da un programma (smart contract) e da un insieme di semi. Questo permette alle PDAs di fungere da proxy crittografici autorizzati. Possono essere configurate per detenere o generare le chiavi simmetriche necessarie alla decifratura dei metadati, consentendo solo a programmi specifici o a logiche predefinite di accedere alle informazioni riservate.
 	\end{itemize}
 	Questa struttura consente un livello superiore di privacy e controllo, utile in applicazioni come musica, arte, giochi, certificati o documentazione legale su blockchain.
 	
@@ -465,9 +472,37 @@
 		Solana Documentation, 2023. Disponibile su:
 		\url{https://solana.com/docs}
 		
-		\bibitem{solananews} 
-		Solana News. Disponibile su:
-		\url{https://solana.com/it/news}
+		\bibitem{poh2018clock}
+		Solana Foundation, \emph{Proof of History: A Clock for Blockchain}, 2018. Disponibile su:
+		\url{https://solana.com/news/proof-of-history--a-clock-for-blockchain}
+		
+		\bibitem{towerbft2018}
+		Solana Foundation, \emph{Tower BFT: Solana’s High Performance Implementation of PBFT}, 2018. Disponibile su:
+		\url{https://solana.com/news/tower-bft--solana-s-high-performance-implementation-of-pbft}
+		
+		\bibitem{turbine2019}
+		Solana Foundation, \emph{Turbine — Solana’s Block Propagation Protocol Solves the Scalability Trilemma}, 2019. Disponibile su:
+		\url{https://solana.com/news/turbine---solana-s-block-propagation-protocol-solves-the-scalability-trilemma}
+		
+		\bibitem{gulfstream2019}
+		Solana Foundation, \emph{Gulf Stream — Solana’s Mempool-Less Transaction Forwarding Protocol}, 2019. Disponibile su:
+		\url{https://solana.com/news/gulf-stream--solana-s-mempool-less-transaction-forwarding-protocol}
+		
+		\bibitem{sealevel2019}
+		Solana Foundation, \emph{Sealevel — Parallel Processing Thousands of Smart Contracts}, 2019. Disponibile su:
+		\url{https://solana.com/news/sealevel---parallel-processing-thousands-of-smart-contracts}
+		
+		\bibitem{pipelining2019}
+		Solana Foundation, \emph{Pipelining in Solana: The Transaction Processing Unit}, 2019. Disponibile su:
+		\url{https://solana.com/news/pipelining-in-solana-the-transaction-processing-unit}
+		
+		\bibitem{cloudbreak2019}
+		Solana Foundation, \emph{Cloudbreak — Solana’s Horizontally Scaled State Architecture}, 2019. Disponibile su:
+		\url{https://solana.com/news/cloudbreak---solana-s-horizontally-scaled-state-architecture}
+		
+		\bibitem{archivers2019}
+		Solana Foundation, \emph{Archivers — Solana’s Solution to Petabytes of Blockchain Data Storage}, 2019. Disponibile su:
+		\url{https://solana.com/news/archivers---solana-s-solution-to-petabytes-of-blockchain-data-storage}
 		
 		\bibitem{castro1999pbft}
 		M. Castro e B. Liskov, \emph{Practical Byzantine Fault Tolerance}, in OSDI, 1999. Disponibile su: \url{https://pmg.csail.mit.edu/papers/osdi99.pdf}
@@ -492,7 +527,6 @@
 		
 		\bibitem{boneh2018zk}
 		D. Boneh et al., \emph{ZK-SNARKs: Scalable, Transparent, and Post-Quantum Secure Proofs}, 2018. Disponibile su: \url{https://eprint.iacr.org/2018/046.pdf}
-		
 	\end{thebibliography}
 	
 \end{document}
